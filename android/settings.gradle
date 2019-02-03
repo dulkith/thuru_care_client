@@ -1,0 +1,3 @@
+rootProject.name = 'thuru_care_client'
+
+include ':app'
