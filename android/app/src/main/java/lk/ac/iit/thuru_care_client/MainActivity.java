@@ -1,4 +1,4 @@
-package com.example.thuru_care_client;
+package lk.ac.iit.thuru_care_client;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
