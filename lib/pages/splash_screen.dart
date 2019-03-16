@@ -54,6 +54,13 @@ class _SplashScreenState extends State<SplashScreen> {
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 24.0),
+                      ),
+                      Text(
+                        ThuruCare.version,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 10.0),
                       )
                     ],
                   ),

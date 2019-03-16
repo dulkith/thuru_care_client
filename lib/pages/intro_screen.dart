@@ -20,7 +20,7 @@ class IntroScreenState extends State<IntroScreen> {
   void _onPageChanged(int page) {
     setState(() {
       currentPage = page;
-      if (currentPage == 2) {
+      if (currentPage == 3) {
         lastPage = true;
       } else {
         lastPage = false;
@@ -61,6 +61,12 @@ class IntroScreenState extends State<IntroScreen> {
                   content: ThuruCare.wc3,
                   imageIcon: FontAwesomeIcons.medkit,
                   imagecolor: Colors.blueAccent,
+                ),
+                Walkthrough(
+                  title: ThuruCare.wt4,
+                  content: ThuruCare.wc4,
+                  imageIcon: FontAwesomeIcons.mapMarkedAlt,
+                  imagecolor: Colors.lime,
                 ),
               ],
               controller: controller,
