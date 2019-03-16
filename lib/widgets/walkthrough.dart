@@ -29,7 +29,7 @@ class WalkthroughState extends State<Walkthrough>
     super.initState();
     animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-    animation = Tween(begin: -250.0, end: 0.0).animate(
+    animation = Tween(begin: 250.0, end: 0.0).animate(
         CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
 
     animation.addListener(() => setState(() {}));
@@ -62,7 +62,7 @@ class WalkthroughState extends State<Walkthrough>
               child: new Text(
                 widget.title,
                 style: TextStyle(
-                    fontSize: 20.0,
+                    fontSize: 25.0,
                     fontWeight: FontWeight.bold,
                     color: Colors.black),
               ),
@@ -80,7 +80,7 @@ class WalkthroughState extends State<Walkthrough>
             ),
             new Icon(
               widget.imageIcon,
-              size: 100.0,
+              size: 110.0,
               color: widget.imagecolor,
             )
           ],

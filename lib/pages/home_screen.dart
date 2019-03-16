@@ -160,27 +160,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               onTap: () => _onListTileTap(context),
             )
           ])),
-      body: CustomScrollView(
-        primary: false,
-        slivers: <Widget>[
-          SliverPadding(
-            padding: const EdgeInsets.all(9.0),
-            sliver: SliverGrid.count(
-              crossAxisSpacing: 1.0,
-              crossAxisCount: 3,
-              children: List.generate(9, (index) {
-                return Card(
-                  child: Image.network("https://robohash.org/$index"),
-                );
-              }),
-            ),
-          ),
-        ],
+      body: Container(
+        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 2.0),
+        child: GridView.count(
+          crossAxisCount: 3,
+          padding: EdgeInsets.all(3.0),
+          children: <Widget>[
+            makeDashboardItem("Diseases", Icons.local_hospital),
+            makeDashboardItem("Community", Icons.comment),
+            makeDashboardItem("Nearby", Icons.location_on),
+            makeDashboardItem("Profile", FontAwesomeIcons.solidUserCircle),
+            makeDashboardItem("Gallery", FontAwesomeIcons.images),
+            makeDashboardItem("Register", FontAwesomeIcons.userPlus),
+            makeDashboardItem("Login", FontAwesomeIcons.signInAlt),
+            makeDashboardItem("Settings", Icons.settings),
+            makeDashboardItem("Help", Icons.help),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.leaf), title: Text('Home')),
           BottomNavigationBarItem(
               icon: Icon(Icons.local_hospital), title: Text('Diseases')),
           BottomNavigationBarItem(
@@ -284,3 +285,37 @@ _onListTileTap(BuildContext context) {
     ),
   );
 }
+
+
+// Dashboard Icons
+Card makeDashboardItem(String title, IconData icon) {
+    return Card(
+        elevation: 1.0,
+        margin: new EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, 1.0)),
+          child: new InkWell(
+            onTap: () {},
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              verticalDirection: VerticalDirection.down,
+              children: <Widget>[
+                SizedBox(height: 20.0),
+                Center(
+                    child: Icon(
+                  icon,
+                  size: 40.0,
+                  color: Colors.green,
+                )),
+                SizedBox(height: 10.0),
+                new Center(
+                  child: new Text(title,
+                      style:
+                          new TextStyle(fontSize: 14.0, color: Colors.black)),
+                )
+              ],
+            ),
+          ),
+        ));
+  }

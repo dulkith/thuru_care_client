@@ -13,7 +13,7 @@ class ThuruCare {
       "Get FREE Expert Suport For Detect \n Disease And Contact Them for \n Aditional Help.";
   static const String wt4 = "NEARBY HOME GARDEN";
   static const String wc4 =
-      "Find Nearby Home-Gardens \n And Expand.";
+      "Find Nearby Home-Gardens Make New \n Friends And Expand Garden.";
   static const String skip = "SKIP";
   static const String next = "NEXT";
   static const String gotIt = "GOT IT";
