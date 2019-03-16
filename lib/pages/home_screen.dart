@@ -3,7 +3,12 @@ import 'package:thuru_care_client/utils/thuru_care.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+const String _AccountName = 'Dulkith Bataduwa';
+const String _AccountEmail = 'dulkith.2016210@iit.ac.lk';
+const String _AccountAbbr = 'D';
+
 class HomeScreen extends StatefulWidget {
+  HomeScreen({Key key}) : super(key: key);
   @override
   _HomeScreenState createState() => new _HomeScreenState();
 }
@@ -16,6 +21,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Animation<double> animation2;
 
   bool showFirst = true;
+
+  int _selectedIndex = 0;
+  final _widgetOptions = [
+    Text('Index 0: Home'),
+    Text('Index 1: Diseases'),
+    Text('Index 2: Community'),
+    Text('Index 3: Nearby'),
+    Text('Index 5: Profile'),
+  ];
 
   @override
   void initState() {
@@ -58,17 +72,140 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           )
         ],
       ),
-      drawer: Drawer(),
-      body: new Center(
-          child: new Stack(
-        children: <Widget>[],
-      )),
+      drawer: new Drawer(
+          child: new ListView(
+              padding: const EdgeInsets.only(top: 0.0),
+              children: <Widget>[
+            new UserAccountsDrawerHeader(
+                accountName: const Text(_AccountName),
+                accountEmail: const Text(_AccountEmail),
+                currentAccountPicture: new CircleAvatar(
+                    backgroundColor: Colors.white,
+                    child: new Text(_AccountAbbr,
+                        style: new TextStyle(
+                            fontSize: 45.0, fontWeight: FontWeight.w400))),
+                otherAccountsPictures: <Widget>[
+                  new GestureDetector(
+                    onTap: () => _onTapOtherAccounts(context),
+                    child: new Semantics(
+                      label: 'Switch Account',
+                      child: new CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: new Text('IIT'),
+                      ),
+                    ),
+                  )
+                ]),
+            new ListTile(
+              leading: new Icon(Icons.home),
+              title: new Text('Home'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(Icons.local_hospital),
+              title: new Text('Diseases Diagnosis'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(Icons.comment),
+              title: new Text('Community Support'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(Icons.location_on),
+              title: new Text('Nearby Gardens'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new Divider(),
+            new ListTile(
+              leading: new Text('User Profile Manager'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(FontAwesomeIcons.signInAlt),
+              title: new Text('Login'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(FontAwesomeIcons.userPlus),
+              title: new Text('Register'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(FontAwesomeIcons.userEdit),
+              title: new Text('Edit Profile'),
+              onTap: () => _onListTileTap(context),
+            ),
+
+            new Divider(),
+            new ListTile(
+              leading: new Icon(FontAwesomeIcons.key),
+              title: new Text('Change Password'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(Icons.delete),
+              title: new Text('Trash'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new Divider(),
+            new ListTile(
+              leading: new Icon(Icons.settings),
+              title: new Text('Settings'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(Icons.help),
+              title: new Text('Help & feedback'),
+              onTap: () => _onListTileTap(context),
+            )
+          ])),
+      body: CustomScrollView(
+        primary: false,
+        slivers: <Widget>[
+          SliverPadding(
+            padding: const EdgeInsets.all(9.0),
+            sliver: SliverGrid.count(
+              crossAxisSpacing: 1.0,
+              crossAxisCount: 3,
+              children: List.generate(9, (index) {
+                return Card(
+                  child: Image.network("https://robohash.org/$index"),
+                );
+              }),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.local_hospital), title: Text('Diseases')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.comment), title: Text('Community')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.location_on), title: Text('Nearby')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), title: Text('Profile')),
+        ],
+        currentIndex: _selectedIndex,
+        fixedColor: Colors.green,
+        onTap: _onItemTapped,
+      ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black87,
+        backgroundColor: Colors.green,
         onPressed: () => {},
-        child: Icon(FontAwesomeIcons.camera, color: Colors.white),
+        child: Icon(Icons.camera_alt, color: Colors.white),
       ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
 
@@ -83,4 +220,67 @@ class CardView extends StatelessWidget {
       size: new Size(cardSize, cardSize),
     ));
   }
+}
+
+// Drawer test pages
+class FirstPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext ctxt) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("First Page"),
+      ),
+      body: new Text("I belongs to First Page"),
+    );
+  }
+}
+
+class SecondPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext ctxt) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text("Second Page"),
+      ),
+      body: new Text("I belongs to Second Page"),
+    );
+  }
+}
+
+//Drawer
+
+_onTapOtherAccounts(BuildContext context) {
+  Navigator.of(context).pop();
+  showDialog<Null>(
+    context: context,
+    child: new AlertDialog(
+      title: const Text('Account switching not implemented.'),
+      actions: <Widget>[
+        new FlatButton(
+          child: const Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+_onListTileTap(BuildContext context) {
+  Navigator.of(context).pop();
+  showDialog<Null>(
+    context: context,
+    child: new AlertDialog(
+      title: const Text('Not Implemented'),
+      actions: <Widget>[
+        new FlatButton(
+          child: const Text('OK'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    ),
+  );
 }
