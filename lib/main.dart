@@ -10,7 +10,7 @@ var routes = <String, WidgetBuilder>{
 
 void main() => runApp(new MaterialApp(
     theme:
-        ThemeData(primaryColor: Colors.green, accentColor: Colors.greenAccent),
+        ThemeData(primaryColor: Colors.green, accentColor: Colors.greenAccent,fontFamily: 'ProximaNova'),
     debugShowCheckedModeBanner: false,
     home: SplashScreen(),
     routes: routes));
