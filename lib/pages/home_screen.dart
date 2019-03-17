@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:thuru_care_client/pages/navigation/fifth_screen.dart';
+import 'package:thuru_care_client/pages/navigation/first_screen.dart';
+import 'package:thuru_care_client/pages/navigation/fourth_screen.dart';
+import 'package:thuru_care_client/pages/navigation/second_screen.dart';
+import 'package:thuru_care_client/pages/navigation/third_screen.dart';
 import 'package:thuru_care_client/utils/thuru_care.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
 
 const String _AccountName = 'Dulkith Bataduwa';
 const String _AccountEmail = 'dulkith.2016210@iit.ac.lk';
@@ -22,14 +28,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   bool showFirst = true;
 
-  int _selectedIndex = 0;
-  final _widgetOptions = [
-    Text('Index 0: Home'),
-    Text('Index 1: Diseases'),
-    Text('Index 2: Community'),
-    Text('Index 3: Nearby'),
-    Text('Index 5: Profile'),
-  ];
+  int _currentIndex = 0;
+ final List<Widget> _children = [
+   FirstScreenState(Colors.red),
+   SecondScreenState(Colors.deepOrange),
+   ThirdScreenState(Colors.green),
+   FourthScreenState(Colors.black),
+   FifthScreenState(Colors.yellow)
+ ];
 
   @override
   void initState() {
@@ -97,28 +103,33 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   )
                 ]),
             new ListTile(
-              leading: new Icon(Icons.home),
+              leading: new Icon(FontAwesomeIcons.home),
               title: new Text('Home'),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
-              leading: new Icon(Icons.local_hospital),
+              leading: new Icon(FontAwesomeIcons.leaf),
               title: new Text('Diseases Diagnosis'),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
-              leading: new Icon(Icons.comment),
+              leading: new Icon(FontAwesomeIcons.solidCommentAlt),
               title: new Text('Community Support'),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
-              leading: new Icon(Icons.location_on),
+              leading: new Icon(FontAwesomeIcons.mapMarkerAlt),
               title: new Text('Nearby Gardens'),
               onTap: () => _onListTileTap(context),
             ),
             new Divider(),
             new ListTile(
               leading: new Text('User Profile Manager'),
+              onTap: () => _onListTileTap(context),
+            ),
+            new ListTile(
+              leading: new Icon(FontAwesomeIcons.userTie),
+              title: new Text('My Profile'),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
@@ -143,11 +154,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               title: new Text('Change Password'),
               onTap: () => _onListTileTap(context),
             ),
-            new ListTile(
-              leading: new Icon(Icons.delete),
-              title: new Text('Trash'),
-              onTap: () => _onListTileTap(context),
-            ),
             new Divider(),
             new ListTile(
               leading: new Icon(Icons.settings),
@@ -155,45 +161,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
-              leading: new Icon(Icons.help),
+              leading: new Icon(Icons.help_outline),
               title: new Text('Help & feedback'),
               onTap: () => _onListTileTap(context),
             )
           ])),
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 2.0),
-        child: GridView.count(
-          crossAxisCount: 3,
-          padding: EdgeInsets.all(3.0),
-          children: <Widget>[
-            makeDashboardItem("Diseases", Icons.local_hospital),
-            makeDashboardItem("Community", Icons.comment),
-            makeDashboardItem("Nearby", Icons.location_on),
-            makeDashboardItem("Profile", FontAwesomeIcons.solidUserCircle),
-            makeDashboardItem("Gallery", FontAwesomeIcons.images),
-            makeDashboardItem("Register", FontAwesomeIcons.userPlus),
-            makeDashboardItem("Login", FontAwesomeIcons.signInAlt),
-            makeDashboardItem("Settings", Icons.settings),
-            makeDashboardItem("Help", Icons.help),
-          ],
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
+      body: _children[_currentIndex],
+      bottomNavigationBar: GradientBottomNavigationBar(
+        backgroundColorStart: Colors.green,
+        backgroundColorEnd: Colors.lightGreen,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(FontAwesomeIcons.leaf), title: Text('Home')),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.local_hospital), title: Text('Diseases')),
+              icon: Icon(FontAwesomeIcons.leaf), title: Text('Diseases')),
           BottomNavigationBarItem(
               icon: Icon(Icons.comment), title: Text('Community')),
           BottomNavigationBarItem(
               icon: Icon(Icons.location_on), title: Text('Nearby')),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person), title: Text('Profile')),
+              icon: Icon(Icons.person), title: Text('My Profile')),
         ],
-        currentIndex: _selectedIndex,
-        fixedColor: Colors.green,
-        onTap: _onItemTapped,
+        currentIndex: _currentIndex,
+        onTap: onTabTapped,
+        
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
@@ -203,11 +193,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  void onTabTapped(int index) {
+   setState(() {
+     _currentIndex = index;
+   });
+ }
 }
 
 class CardView extends StatelessWidget {
@@ -285,37 +275,3 @@ _onListTileTap(BuildContext context) {
     ),
   );
 }
-
-
-// Dashboard Icons
-Card makeDashboardItem(String title, IconData icon) {
-    return Card(
-        elevation: 1.0,
-        margin: new EdgeInsets.all(8.0),
-        child: Container(
-          decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, 1.0)),
-          child: new InkWell(
-            onTap: () {},
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              verticalDirection: VerticalDirection.down,
-              children: <Widget>[
-                SizedBox(height: 20.0),
-                Center(
-                    child: Icon(
-                  icon,
-                  size: 40.0,
-                  color: Colors.green,
-                )),
-                SizedBox(height: 10.0),
-                new Center(
-                  child: new Text(title,
-                      style:
-                          new TextStyle(fontSize: 14.0, color: Colors.black)),
-                )
-              ],
-            ),
-          ),
-        ));
-  }
