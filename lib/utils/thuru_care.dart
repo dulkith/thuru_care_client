@@ -17,4 +17,25 @@ class ThuruCare {
   static const String skip = "SKIP";
   static const String next = "NEXT";
   static const String gotIt = "GOT IT";
+
+  //Dashboard
+  static const String dashHome = "Home";
+  static const String dashDiseases = "Diseases";
+  static const String dashComm = "Community";
+  static const String dashNear = "Nearby";
+  static const String dashPro = "My Profile";
+
+   //Drawer
+  static const String drawerHome = "Home";
+  static const String drawerDiseasesDiag = "Diseases Diagnosis";
+  static const String drawerComSupport = "Community Support";
+  static const String drawerNearGarden = "Nearby Gardens";
+  static const String drawerUserProManager = "User Profile Manager";
+  static const String drawerMyProfile = "My Profile";
+  static const String drawerLogin = "Login";
+  static const String drawerRegister = "Register";
+  static const String drawerEditProfile = "Edit Profile";
+  static const String drawerChangePass = "Change Password";
+  static const String drawerSettings = "Settings";
+  static const String drawerHelpAndFeed = "Help & Feedback";
 }

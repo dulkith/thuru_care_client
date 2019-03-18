@@ -3,6 +3,7 @@ import 'package:thuru_care_client/pages/navigation/fifth_screen.dart';
 import 'package:thuru_care_client/pages/navigation/first_screen.dart';
 import 'package:thuru_care_client/pages/navigation/fourth_screen.dart';
 import 'package:thuru_care_client/pages/navigation/second_screen.dart';
+import 'package:thuru_care_client/pages/navigation/sixth_screen.dart';
 import 'package:thuru_care_client/pages/navigation/third_screen.dart';
 import 'package:thuru_care_client/utils/thuru_care.dart';
 
@@ -14,7 +15,9 @@ const String _AccountEmail = 'dulkith.2016210@iit.ac.lk';
 const String _AccountAbbr = 'D';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key}) : super(key: key);
+  var cameras;
+  HomeScreen(this.cameras);
+
   @override
   _HomeScreenState createState() => new _HomeScreenState();
 }
@@ -104,65 +107,65 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ]),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.home),
-              title: new Text('Home'),
+              title: new Text(ThuruCare.drawerHome),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.leaf),
-              title: new Text('Diseases Diagnosis'),
+              title: new Text(ThuruCare.drawerDiseasesDiag),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.solidCommentAlt),
-              title: new Text('Community Support'),
+              title: new Text(ThuruCare.drawerComSupport),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.mapMarkerAlt),
-              title: new Text('Nearby Gardens'),
+              title: new Text(ThuruCare.drawerNearGarden),
               onTap: () => _onListTileTap(context),
             ),
             new Divider(),
             new ListTile(
-              leading: new Text('User Profile Manager'),
+              leading: new Text(ThuruCare.drawerUserProManager),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.userTie),
-              title: new Text('My Profile'),
+              title: new Text(ThuruCare.drawerMyProfile),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.signInAlt),
-              title: new Text('Login'),
+              title: new Text(ThuruCare.drawerLogin),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.userPlus),
-              title: new Text('Register'),
+              title: new Text(ThuruCare.drawerRegister),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.userEdit),
-              title: new Text('Edit Profile'),
+              title: new Text(ThuruCare.drawerEditProfile),
               onTap: () => _onListTileTap(context),
             ),
 
             new Divider(),
             new ListTile(
               leading: new Icon(FontAwesomeIcons.key),
-              title: new Text('Change Password'),
+              title: new Text(ThuruCare.drawerChangePass),
               onTap: () => _onListTileTap(context),
             ),
             new Divider(),
             new ListTile(
               leading: new Icon(Icons.settings),
-              title: new Text('Settings'),
+              title: new Text(ThuruCare.drawerSettings),
               onTap: () => _onListTileTap(context),
             ),
             new ListTile(
               leading: new Icon(Icons.help_outline),
-              title: new Text('Help & feedback'),
+              title: new Text(ThuruCare.drawerHelpAndFeed),
               onTap: () => _onListTileTap(context),
             )
           ])),
@@ -171,15 +174,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         backgroundColorStart: Colors.green,
         backgroundColorEnd: Colors.lightGreen,
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Home')),
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text(ThuruCare.dashHome)),
           BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.leaf), title: Text('Diseases')),
+              icon: Icon(FontAwesomeIcons.leaf), title: Text(ThuruCare.dashDiseases)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.comment), title: Text('Community')),
+              icon: Icon(Icons.comment), title: Text(ThuruCare.dashComm)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.location_on), title: Text('Nearby')),
+              icon: Icon(Icons.location_on), title: Text(ThuruCare.dashNear)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person), title: Text('My Profile')),
+              icon: Icon(Icons.person), title: Text(ThuruCare.dashPro)),
         ],
         currentIndex: _currentIndex,
         onTap: onTabTapped,
@@ -187,7 +190,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.green,
-        onPressed: () => {},
+        onPressed: () => {
+          Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => new CameraScreen(widget.cameras)),
+        )
+        },
         child: Icon(Icons.camera_alt, color: Colors.white),
       ),
     );
