@@ -27,8 +27,18 @@ class _SplashScreenState extends State<SplashScreen> {
         fit: StackFit.expand,
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(color: Colors.greenAccent),
+          decoration: new BoxDecoration(
+            gradient: new LinearGradient(
+                colors: [
+                  Colors.green,
+                  Colors.greenAccent,
+                ],
+                begin: const FractionalOffset(0.0, 0.0),
+                end: Alignment(0.8, 5.0), 
+                stops: [0.0, 0.5],
+                tileMode: TileMode.clamp),
           ),
+        ),
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
@@ -41,11 +51,8 @@ class _SplashScreenState extends State<SplashScreen> {
                       CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 50.0,
-                        child: Icon(
-                          FontAwesomeIcons.envira,
-                          color: Colors.greenAccent,
-                          size: 70.0,
-                        ),
+                        backgroundImage:
+                        AssetImage('assets/logo.png'),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 10.0),

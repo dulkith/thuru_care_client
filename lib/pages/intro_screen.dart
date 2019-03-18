@@ -41,13 +41,13 @@ class IntroScreenState extends State<IntroScreen> {
             child: Container(),
           ),
           Expanded(
-            flex: 4,
+            flex: 6,
             child: PageView(
               children: <Widget>[
                 Walkthrough(
                   title: ThuruCare.wt1,
                   content: ThuruCare.wc1,
-                  imageIcon: FontAwesomeIcons.envira,
+                  imageIcon: FontAwesomeIcons.leaf,
                   imagecolor: Colors.green,
                 ),
                 Walkthrough(
@@ -66,7 +66,7 @@ class IntroScreenState extends State<IntroScreen> {
                   title: ThuruCare.wt4,
                   content: ThuruCare.wc4,
                   imageIcon: FontAwesomeIcons.mapMarkedAlt,
-                  imagecolor: Colors.lime,
+                  imagecolor: Colors.lightGreen,
                 ),
               ],
               controller: controller,

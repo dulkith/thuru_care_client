@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       theme:
-        ThemeData(primaryColor: Colors.green, accentColor: Colors.greenAccent,fontFamily: 'ProximaNova'),
+        ThemeData(primaryColor: Colors.green, accentColor: Colors.greenAccent,fontFamily: 'Ubuntu'),
     debugShowCheckedModeBanner: false,
     home: SplashScreen(),
     routes: routes);
