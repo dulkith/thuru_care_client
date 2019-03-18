@@ -23,6 +23,7 @@ dependencies:
   gradient_bottom_navigation_bar: ^1.0.0+4
   camera:
   path_provider: ^0.5.0+1
+  flutter_launcher_icons: ^0.7.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -36,7 +37,7 @@ dev_dependencies:
 flutter_icons:
   android: "launcher_icon" 
   ios: true
-  image_path: "assets/icon/icon.png"
+  image_path: "assets/icon/logo.png"
 
 
 # For information on the generic Dart part of this file, see the
@@ -54,6 +55,7 @@ flutter:
   assets:
     - assets/title.png
     - assets/title_black.png
+    - assets/logo.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -67,11 +69,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
+  fonts:
+    - family: Ubuntu
+      fonts:
+        - asset: assets/fonts/Ubuntu-Regular.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
