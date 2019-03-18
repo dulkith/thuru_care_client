@@ -72,7 +72,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(ThuruCare.name),
+        title: Center(
+        child: new Image.asset('assets/title.png', fit: BoxFit.cover,)
+      ),
         backgroundColor: Colors.green,
         actions: <Widget>[
           Padding(
