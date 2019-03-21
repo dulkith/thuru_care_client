@@ -69,7 +69,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       
 
-      body: _children[_currentIndex],
+      body: _children[_currentIndex]
+      
+      ,
       bottomNavigationBar: GradientBottomNavigationBar(
         backgroundColorStart: Colors.green,
         backgroundColorEnd: Colors.lightGreen,

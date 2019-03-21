@@ -36,6 +36,7 @@ void logError(String code, String message) =>
 class _CameraExampleHomeState extends State<CameraScreen> {
   CameraController controller;
   String imagePath;
+  double scale = 1.0;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -93,10 +94,25 @@ class _CameraExampleHomeState extends State<CameraScreen> {
         ),
       );
     } else {
-      return AspectRatio(
-        aspectRatio: controller.value.aspectRatio,
+      return new GestureDetector(
+      onScaleUpdate:(one){
+        print(one.scale);
+
+        scale = one.scale;
+        setState(() {});
+      },
+
+      child: new Transform.scale(
+        scale: scale,
+        child: new AspectRatio(
+            aspectRatio: controller.value.aspectRatio,
         child: CameraPreview(controller),
-      );
+        )
+      )
+
+
+    );
+      
     }
   }
 
