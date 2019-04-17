@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:thuru_care_client/utils/thuru_care.dart';
 import 'package:thuru_care_client/utils/my_navigator.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -31,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
             gradient: new LinearGradient(
                 colors: [
                   Colors.green,
-                  Colors.greenAccent,
+                  Colors.lightGreen,
                 ],
                 begin: const FractionalOffset(0.0, 0.0),
                 end: Alignment(0.8, 5.0), 
@@ -82,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   children: <Widget>[
                     CircularProgressIndicator(
                       valueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.green),
+                          new AlwaysStoppedAnimation<Color>(Colors.black54),
                     ),
                     Padding(
                       padding: EdgeInsets.only(top: 20.0),
