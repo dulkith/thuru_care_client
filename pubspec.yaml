@@ -25,6 +25,7 @@ dependencies:
   flutter_launcher_icons: ^0.7.0
   fluttertoast: ^3.0.1
   image_picker: ^0.5.0+3
+  simple_permissions: ^0.1.9
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -33,7 +34,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: "^0.7.0"
 
   flutter_cameraview:
     git:
@@ -67,6 +67,7 @@ flutter:
     - assets/images/ic_switch_camera_3.png
     - assets/images/ic_no_image.png
     - assets/images/ic_flash_camera.png
+    - assets/fruits_and_vegitables.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
