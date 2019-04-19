@@ -12,7 +12,7 @@ import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.da
 
 class HomeScreen extends StatefulWidget {
   var cameras;
-  HomeScreen(this.cameras);
+  HomeScreen();
 
   @override
   _HomeScreenState createState() => new _HomeScreenState();
@@ -69,9 +69,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Scaffold(
       
 
-      body: _children[_currentIndex]
-      
-      ,
+      body: _children[_currentIndex],
       bottomNavigationBar: GradientBottomNavigationBar(
         backgroundColorStart: Colors.green,
         backgroundColorEnd: Colors.lightGreen,
@@ -95,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         onPressed: () => {
           Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => new CameraScreen(widget.cameras)),
+          MaterialPageRoute(builder: (context) => new CameraHomeScreen()),
         )
         },
         child: Icon(Icons.camera_alt, color: Colors.white),

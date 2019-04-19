@@ -1,19 +1,14 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:thuru_care_client/pages/home_screen.dart';
 import 'package:thuru_care_client/pages/intro_screen.dart';
 import 'package:thuru_care_client/pages/splash_screen.dart';
 
-
-List<CameraDescription> cameras;
-
 Future<Null> main() async {
-  cameras = await availableCameras();
   runApp(new MyApp());
 }
 
 var routes = <String, WidgetBuilder>{
-  "/home": (BuildContext context) => HomeScreen(cameras),
+  "/home": (BuildContext context) => HomeScreen(),
   "/intro": (BuildContext context) => IntroScreen(),
 };
 

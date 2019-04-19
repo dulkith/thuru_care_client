@@ -1,268 +1,240 @@
-import 'dart:async';
+import 'package:flutter/material.dart';
 import 'dart:io';
 
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:flutter_cameraview/flutter_cameraview.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 
-class CameraScreen extends StatefulWidget {
-  List<CameraDescription> cameras;
+import 'settings_page.dart';
 
-  CameraScreen(this.cameras);
+class CameraHomeScreen extends StatefulWidget  {
+  CameraHomeScreen({Key key}) : super(key: key);
 
-   @override
-  _CameraExampleHomeState createState() {
-    return _CameraExampleHomeState();
-  }
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
 }
 
-/// Returns a suitable camera icon for [direction].
-IconData getCameraLensIcon(CameraLensDirection direction) {
-  switch (direction) {
-    case CameraLensDirection.back:
-      return Icons.camera_rear;
-    case CameraLensDirection.front:
-      return Icons.camera_front;
-    case CameraLensDirection.external:
-      return Icons.camera;
+class _MyHomePageState extends State<CameraHomeScreen> {
+  CameraViewController _cameraViewController; 
+  Icon _flashButtonIcon = Icon(Icons.flash_off);
+  Image _thumbnailImage;
+
+  @override
+  void initState() {
+    super.initState();
   }
-  throw ArgumentError('Unknown lens direction');
-}
-
-void logError(String code, String message) =>
-    print('Error: $code\nError Message: $message');
-
-class _CameraExampleHomeState extends State<CameraScreen> {
-  CameraController controller;
-  String imagePath;
-  double scale = 1.0;
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      body: Column(
-        
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Center(
-                  child: _cameraPreviewWidget(),
+    return MaterialApp(
+    debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        body: Stack(
+          children: <Widget>[
+            CameraView(
+              onCreated: _onCameraViewCreated
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: double.infinity,
+                height: 120.0,
+                padding: EdgeInsets.all(20.0),
+                color: Color.fromRGBO(00, 00, 00, 0.4),
+                child: Stack(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.center,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                          onTap: () {
+                            _onTakePictureButtonPressed();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(4.0),
+                            child: Image.asset(
+                              'assets/images/ic_shutter_1.png',
+                              width: 72.0,
+                              height: 72.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                          onTap: () {
+                            _onFlashButtonPressed();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(4.0),
+                            color: Colors.white,
+                            child: _flashButtonIcon,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                          onTap: () {
+                            _onCameraFacingButtonPressed();
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(4.0),
+                            child: Image.asset(
+                              'assets/images/ic_switch_camera_3.png',
+                              color: Colors.grey[200],
+                              width: 42.0,
+                              height: 42.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    //thumbnail & gallery button
+            Positioned(
+              bottom: 20.0,
+              width: 40.0,
+              height: 40.0,
+              right: 15.0,
+              child: new RaisedButton(
+                color: Colors.black,
+                shape: new CircleBorder(),
+                padding: EdgeInsets.all(0),
+                child: CircleAvatar( 
+                  backgroundColor: Colors.black,
+                  radius: 20.0,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: _thumbnailImage
+                  ),
                 ),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.green,
-                border: Border.all(
-                  color: controller != null && controller.value.isRecordingVideo
-                      ? Colors.redAccent
-                      : Colors.grey,
-                  width: .0,
+                onPressed: () => _openImageGallery()
+              )
+            )
+                  ],
                 ),
               ),
             ),
-          ),
-          _captureControlRowWidget(),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                _cameraTogglesRowWidget(),
-                _thumbnailWidget(),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+ 
+  void _onCameraViewCreated(CameraViewController controller){
+      _cameraViewController = controller;
+      _cameraViewController.onPictureFileCreated = _onPictureFileCreated;
+  }
 
-  /// Display the preview from the camera (or a message if the preview is not available).
-  Widget _cameraPreviewWidget() {
-    if (controller == null || !controller.value.isInitialized) {
-      return const Text(
-        'Tap a camera',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24.0,
-          fontWeight: FontWeight.w900,
-        ),
-      );
-    } else {
-      return new GestureDetector(
-      onScaleUpdate:(one){
-        print(one.scale);
-
-        scale = one.scale;
-        setState(() {});
-      },
-
-      child: new Transform.scale(
-        scale: scale,
-        child: new AspectRatio(
-            aspectRatio: controller.value.aspectRatio,
-        child: CameraPreview(controller),
-        )
-      )
-
-
-    );
+  void _onFlashButtonPressed() async {
+      if(! await _cameraViewController.isOpened()) {
+          showToast("Error: Camera not opened!");
+          return;
+      }
       
-    }
-  }
+      Flash flash = await _cameraViewController.getFlash();
+      Icon icon;
+      String msg;
+      switch(flash) {
+        case Flash.Off:
+          flash = Flash.On;
+          msg = "Flash On";
+          icon = Icon(Icons.flash_on);
+          break;
 
-  /// Display the thumbnail of the captured image or video.
-  Widget _thumbnailWidget() {
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        
-      ),
-    );
-  }
+        case Flash.On:
+          flash = Flash.Auto;
+          msg = "Flash Auto";
+          icon = Icon(Icons.flash_auto);
+          break;
 
-  /// Display the control bar with buttons to take pictures and record videos.
-  Widget _captureControlRowWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      mainAxisSize: MainAxisSize.max,
-      children: <Widget>[
-        IconButton(
-          icon: const Icon(Icons.camera_alt),
-          color: Colors.green,
-          onPressed: controller != null &&
-                  controller.value.isInitialized &&
-                  !controller.value.isRecordingVideo
-              ? onTakePictureButtonPressed
-              : null,
-              iconSize: 78,
-        ),
-        
-      ],
-    );
-  }
+        case Flash.Auto:
+          flash = Flash.Torch;
+          msg = "Torch Mode";
+          icon = Icon(Icons.highlight);
+          break;
 
-  /// Display a row of toggle to select the camera (or a message if no camera is available).
-  Widget _cameraTogglesRowWidget() {
-    final List<Widget> toggles = <Widget>[];
-
-    if (widget.cameras?.isEmpty ?? true) {
-      return const Text('No camera found');
-    } else {
-      for (CameraDescription cameraDescription in widget.cameras) {
-        toggles.add(
-          SizedBox(
-            width: 90.0,
-            child: RadioListTile<CameraDescription>(
-              title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              groupValue: controller?.description,
-              value: cameraDescription,
-              onChanged: controller != null && controller.value.isRecordingVideo
-                  ? null
-                  : onNewCameraSelected,
-            ),
-            
-          ),
-        );
-        //onNewCameraSelected(cameraDescription);
-        setFullscreen(true);
-        //break;
+        case Flash.Torch:
+          flash = Flash.Off;
+          msg = "Flash Off";
+          icon = Icon(Icons.flash_off);
+          break;
       }
-      /*
-      for (CameraDescription cameraDescription in widget.cameras) {
-            onNewCameraSelected(cameraDescription);
-            break;
-      }*/
-    }
+      
+      await _cameraViewController.setFlash(flash);
 
-    return Row(children: toggles);
+      setState(() {
+        _flashButtonIcon = icon;
+      });
+
+      showToast(msg);
   }
 
-  String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
+  void _onCameraFacingButtonPressed() async {
+    if(! await _cameraViewController.isOpened()) {
+        showToast("Error: Camera not opened!");
+        return;
+    }
 
-  void showInSnackBar(String message) {
-    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
+    Facing facing = await _cameraViewController.getFacing();
+    String msg;
+    if( facing == Facing.Back) {
+      facing = Facing.Front;
+      msg = "Front camera";
+    }
+    else {
+      facing = Facing.Back;
+      msg = "Back camera";
+    }
+    await _cameraViewController.setFacing(facing);
+
+    showToast(msg);
   }
 
-  void onNewCameraSelected(CameraDescription cameraDescription) async {
-    if (controller != null) {
-      await controller.dispose();
+  void _onTakePictureButtonPressed() async {
+    if(! await _cameraViewController.isOpened()) {
+        showToast("Error: Camera not opened!");
+        return;
     }
-    controller = CameraController(cameraDescription, ResolutionPreset.high);
+    _cameraViewController.takePicture();
+  }
 
-    // If the controller is updated then update the UI.
-    controller.addListener(() {
-      if (mounted) setState(() {});
-      if (controller.value.hasError) {
-        showInSnackBar('Camera error ${controller.value.errorDescription}');
+  void _onPictureFileCreated(String filePath) async { 
+      if( filePath == null  || filePath.isEmpty) {
+          return;
       }
-    });
+      showToast("Picture saved to " + filePath);
 
-    try {
-      await controller.initialize();
-    } on CameraException catch (e) {
-      _showCameraException(e);
-    }
+      //Build thumbnail
+      Image image = new Image.file(new File(filePath) , width: 120, height: 120, 
+          fit: BoxFit.cover ,filterQuality: FilterQuality.low); 
 
-    if (mounted) {
-      setState(() {});
-    }
+      setState(() {
+        _thumbnailImage = image;
+      });
   }
 
-  void onTakePictureButtonPressed() {
-    takePicture().then((String filePath) {
-      if (mounted) {
-        setState(() {
-          imagePath = filePath;
-        });
-        if (filePath != null) showInSnackBar('Picture saved to $filePath');
-      }
-    });
-  }
-  
-
-  Future<String> takePicture() async {
-    if (!controller.value.isInitialized) {
-      showInSnackBar('Error: select a camera first.');
-      return null;
-    }
-    final Directory extDir = await getApplicationDocumentsDirectory();
-    final String dirPath = '${extDir.path}/Pictures/flutter_test';
-    await Directory(dirPath).create(recursive: true);
-    final String filePath = '$dirPath/${timestamp()}.jpg';
-
-    if (controller.value.isTakingPicture) {
-      // A capture is already pending, do nothing.
-      return null;
-    }
-
-    try {
-      await controller.takePicture(filePath);
-    } on CameraException catch (e) {
-      _showCameraException(e);
-      return null;
-    }
-    return filePath;
+  void _openImageGallery() async {
+    await ImagePicker.pickImage(source: ImageSource.gallery);
   }
 
-  void _showCameraException(CameraException e) {
-    logError(e.code, e.description);
-    showInSnackBar('Error: ${e.code}\n${e.description}');
+  void _onSettingsButtonPressed(BuildContext context) async {
+     Navigator.push(context, new MaterialPageRoute(builder: (context) => new SettingsPage()));
   }
 
-  static setFullscreen(bool value) {
-    if (value) {
-      SystemChrome.setEnabledSystemUIOverlays([]);
-    } else {
-      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
-    }
+  void showToast(String msg) async {
+    Fluttertoast.cancel(); //Hides previous toast message
+    Fluttertoast.showToast(msg: msg, toastLength: Toast.LENGTH_SHORT , gravity: ToastGravity.CENTER);
   }
-  
 }
-
-
