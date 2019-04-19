@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import 'settings_page.dart';
 
-class CameraHomeScreen extends StatefulWidget  {
+class CameraHomeScreen extends StatefulWidget {
   CameraHomeScreen({Key key}) : super(key: key);
 
   @override
@@ -15,7 +15,7 @@ class CameraHomeScreen extends StatefulWidget  {
 }
 
 class _MyHomePageState extends State<CameraHomeScreen> {
-  CameraViewController _cameraViewController; 
+  CameraViewController _cameraViewController;
   Icon _flashButtonIcon = Icon(Icons.flash_off);
   Image _thumbnailImage;
 
@@ -27,12 +27,12 @@ class _MyHomePageState extends State<CameraHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-    debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Stack(
           children: <Widget>[
             CameraView(
-              onCreated: _onCameraViewCreated
+                onCreated: _onCameraViewCreated
             ),
             Align(
               alignment: Alignment.bottomCenter,
@@ -40,7 +40,7 @@ class _MyHomePageState extends State<CameraHomeScreen> {
                 width: double.infinity,
                 height: 120.0,
                 padding: EdgeInsets.all(20.0),
-                color: Color.fromRGBO(00, 00, 00, 0.4),
+                color: Color.fromRGBO(00, 99, 00, 0.4),
                 child: Stack(
                   children: <Widget>[
                     Align(
@@ -101,95 +101,108 @@ class _MyHomePageState extends State<CameraHomeScreen> {
                         ),
                       ),
                     ),
-                    //thumbnail & gallery button
-            Positioned(
-              bottom: 20.0,
-              width: 40.0,
-              height: 40.0,
-              right: 15.0,
-              child: new RaisedButton(
-                color: Colors.black,
-                shape: new CircleBorder(),
-                padding: EdgeInsets.all(0),
-                child: CircleAvatar( 
-                  backgroundColor: Colors.black,
-                  radius: 20.0,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: _thumbnailImage
-                  ),
-                ),
-                onPressed: () => _openImageGallery()
-              )
-            )
                   ],
                 ),
               ),
             ),
+            //Settings button
+            Positioned(
+              top: 8.0,
+              right: 8.0,
+              width: 40.0,
+              height: 40.0,
+              child: new IconButton(
+                color: Colors.white,
+                icon: new Icon(Icons.settings, size: 25.0),
+                onPressed: () => _onSettingsButtonPressed(context),
+              ),
+            ),
+
+            //thumbnail & gallery button
+            Positioned(
+                bottom:  (MediaQuery.of(context).size.height/2 - 160),
+                width: 40.0,
+                height: 40.0,
+                right: 15.0,
+                child: new RaisedButton(
+                    color: Colors.black,
+                    shape: new CircleBorder(),
+                    padding: EdgeInsets.all(0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black,
+                      radius: 20.0,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.0),
+                          child: _thumbnailImage
+                      ),
+                    ),
+                    onPressed: () => _openImageGallery()
+                )
+            )
           ],
         ),
       ),
     );
   }
- 
-  void _onCameraViewCreated(CameraViewController controller){
-      _cameraViewController = controller;
-      _cameraViewController.onPictureFileCreated = _onPictureFileCreated;
+
+  void _onCameraViewCreated(CameraViewController controller) {
+    _cameraViewController = controller;
+    _cameraViewController.onPictureFileCreated = _onPictureFileCreated;
   }
 
   void _onFlashButtonPressed() async {
-      if(! await _cameraViewController.isOpened()) {
-          showToast("Error: Camera not opened!");
-          return;
-      }
-      
-      Flash flash = await _cameraViewController.getFlash();
-      Icon icon;
-      String msg;
-      switch(flash) {
-        case Flash.Off:
-          flash = Flash.On;
-          msg = "Flash On";
-          icon = Icon(Icons.flash_on);
-          break;
+    if (!await _cameraViewController.isOpened()) {
+      showToast("Error: Camera not opened!");
+      return;
+    }
 
-        case Flash.On:
-          flash = Flash.Auto;
-          msg = "Flash Auto";
-          icon = Icon(Icons.flash_auto);
-          break;
+    Flash flash = await _cameraViewController.getFlash();
+    Icon icon;
+    String msg;
+    switch (flash) {
+      case Flash.Off:
+        flash = Flash.On;
+        msg = "Flash On";
+        icon = Icon(Icons.flash_on);
+        break;
 
-        case Flash.Auto:
-          flash = Flash.Torch;
-          msg = "Torch Mode";
-          icon = Icon(Icons.highlight);
-          break;
+      case Flash.On:
+        flash = Flash.Auto;
+        msg = "Flash Auto";
+        icon = Icon(Icons.flash_auto);
+        break;
 
-        case Flash.Torch:
-          flash = Flash.Off;
-          msg = "Flash Off";
-          icon = Icon(Icons.flash_off);
-          break;
-      }
-      
-      await _cameraViewController.setFlash(flash);
+      case Flash.Auto:
+        flash = Flash.Torch;
+        msg = "Torch Mode";
+        icon = Icon(Icons.highlight);
+        break;
 
-      setState(() {
-        _flashButtonIcon = icon;
-      });
+      case Flash.Torch:
+        flash = Flash.Off;
+        msg = "Flash Off";
+        icon = Icon(Icons.flash_off);
+        break;
+    }
 
-      showToast(msg);
+    await _cameraViewController.setFlash(flash);
+
+    setState(() {
+      _flashButtonIcon = icon;
+    });
+
+    showToast(msg);
   }
 
   void _onCameraFacingButtonPressed() async {
-    if(! await _cameraViewController.isOpened()) {
-        showToast("Error: Camera not opened!");
-        return;
+    if (!await _cameraViewController.isOpened()) {
+      showToast("Error: Camera not opened!");
+      return;
     }
 
     Facing facing = await _cameraViewController.getFacing();
     String msg;
-    if( facing == Facing.Back) {
+    if (facing == Facing.Back) {
       facing = Facing.Front;
       msg = "Front camera";
     }
@@ -203,26 +216,26 @@ class _MyHomePageState extends State<CameraHomeScreen> {
   }
 
   void _onTakePictureButtonPressed() async {
-    if(! await _cameraViewController.isOpened()) {
-        showToast("Error: Camera not opened!");
-        return;
+    if (!await _cameraViewController.isOpened()) {
+      showToast("Error: Camera not opened!");
+      return;
     }
     _cameraViewController.takePicture();
   }
 
-  void _onPictureFileCreated(String filePath) async { 
-      if( filePath == null  || filePath.isEmpty) {
-          return;
-      }
-      showToast("Picture saved to " + filePath);
+  void _onPictureFileCreated(String filePath) async {
+    if (filePath == null || filePath.isEmpty) {
+      return;
+    }
+    showToast("Picture saved to " + filePath);
 
-      //Build thumbnail
-      Image image = new Image.file(new File(filePath) , width: 120, height: 120, 
-          fit: BoxFit.cover ,filterQuality: FilterQuality.low); 
+    //Build thumbnail
+    Image image = new Image.file(new File(filePath), width: 120, height: 120,
+        fit: BoxFit.cover, filterQuality: FilterQuality.low);
 
-      setState(() {
-        _thumbnailImage = image;
-      });
+    setState(() {
+      _thumbnailImage = image;
+    });
   }
 
   void _openImageGallery() async {
@@ -230,11 +243,14 @@ class _MyHomePageState extends State<CameraHomeScreen> {
   }
 
   void _onSettingsButtonPressed(BuildContext context) async {
-     Navigator.push(context, new MaterialPageRoute(builder: (context) => new SettingsPage()));
+    Navigator.push(context,
+        new MaterialPageRoute(builder: (context) => new SettingsPage()));
   }
 
   void showToast(String msg) async {
     Fluttertoast.cancel(); //Hides previous toast message
-    Fluttertoast.showToast(msg: msg, toastLength: Toast.LENGTH_SHORT , gravity: ToastGravity.CENTER);
+    Fluttertoast.showToast(msg: msg,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER);
   }
 }
