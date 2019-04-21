@@ -1,3 +1,4 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:thuru_care_client/pages/home_screen.dart';
 import 'package:thuru_care_client/pages/intro_screen.dart';

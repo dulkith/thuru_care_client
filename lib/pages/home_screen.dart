@@ -11,9 +11,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
-  var cameras;
-  HomeScreen();
-
   @override
   _HomeScreenState createState() => new _HomeScreenState();
 }
@@ -89,14 +86,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.black54,
         onPressed: () => {
           Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => new CameraHomeScreen()),
         )
-        },
-        child: Icon(Icons.camera_alt, color: Colors.white),
+        },tooltip: 'Add',
+      child: Icon(Icons.camera_alt, color: Colors.white, size: 30,),
       ),
     );
   }
