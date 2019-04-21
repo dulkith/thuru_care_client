@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_cameraview/flutter_cameraview.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:thuru_care_client/pages/navigation/seventh_screen.dart';
 
 import 'settings_page.dart';
 
@@ -31,9 +32,7 @@ class _MyHomePageState extends State<CameraHomeScreen> {
       home: Scaffold(
         body: Stack(
           children: <Widget>[
-            CameraView(
-                onCreated: _onCameraViewCreated
-            ),
+            CameraView(onCreated: _onCameraViewCreated),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -120,7 +119,7 @@ class _MyHomePageState extends State<CameraHomeScreen> {
 
             //thumbnail & gallery button
             Positioned(
-                bottom:  (MediaQuery.of(context).size.height/2 - 160),
+                bottom: (MediaQuery.of(context).size.height / 2 - 160),
                 width: 40.0,
                 height: 40.0,
                 right: 15.0,
@@ -133,12 +132,9 @@ class _MyHomePageState extends State<CameraHomeScreen> {
                       radius: 20.0,
                       child: ClipRRect(
                           borderRadius: BorderRadius.circular(20.0),
-                          child: _thumbnailImage
-                      ),
+                          child: _thumbnailImage),
                     ),
-                    onPressed: () => _openImageGallery()
-                )
-            )
+                    onPressed: () => _openImageGallery()))
           ],
         ),
       ),
@@ -205,8 +201,7 @@ class _MyHomePageState extends State<CameraHomeScreen> {
     if (facing == Facing.Back) {
       facing = Facing.Front;
       msg = "Front camera";
-    }
-    else {
+    } else {
       facing = Facing.Back;
       msg = "Back camera";
     }
@@ -230,12 +225,20 @@ class _MyHomePageState extends State<CameraHomeScreen> {
     showToast("Picture saved to " + filePath);
 
     //Build thumbnail
-    Image image = new Image.file(new File(filePath), width: 120, height: 120,
-        fit: BoxFit.cover, filterQuality: FilterQuality.low);
+    Image image = new Image.file(new File(filePath),
+        width: 120,
+        height: 120,
+        fit: BoxFit.cover,
+        scale: 0.2,
+        filterQuality: FilterQuality.low);
 
     setState(() {
       _thumbnailImage = image;
     });
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CameraPreview(filePath)),
+    );
   }
 
   void _openImageGallery() async {
@@ -249,7 +252,8 @@ class _MyHomePageState extends State<CameraHomeScreen> {
 
   void showToast(String msg) async {
     Fluttertoast.cancel(); //Hides previous toast message
-    Fluttertoast.showToast(msg: msg,
+    Fluttertoast.showToast(
+        msg: msg,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER);
   }
