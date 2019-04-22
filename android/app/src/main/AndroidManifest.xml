@@ -17,6 +17,9 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="Thuru Care"
         android:icon="@mipmap/launcher_icon">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB6lcJSWOWxBHC_YU7CkEC_gJ7RVZlIHsk"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

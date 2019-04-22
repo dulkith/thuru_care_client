@@ -141,6 +141,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "8.4.0"
+  google_maps_flutter:
+    dependency: "direct main"
+    description:
+      name: google_maps_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.5.7"
   gradient_bottom_navigation_bar:
     dependency: "direct main"
     description:
@@ -309,4 +316,4 @@ packages:
     version: "1.3.1"
 sdks:
   dart: ">=2.1.0 <3.0.0"
-  flutter: ">=0.1.4 <2.0.0"
+  flutter: ">=0.11.9 <2.0.0"
