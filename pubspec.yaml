@@ -24,14 +24,13 @@ dependencies:
   path_provider: ^0.5.0+1
   flutter_launcher_icons: ^0.7.0
   fluttertoast: ^3.0.1
-  image_picker: ^0.5.0+3
+  image_picker: ^0.4.12
   photo_view: ^0.2.5
-  flutter_luban: ^0.1.6+1
   zoomable_image: ^1.3.1
   camera:
   flutter_image_compress: ^0.4.0
   google_maps_flutter: ^0.5.7
-
+  flutter_cache_manager: ^0.3.2
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -46,7 +45,7 @@ dev_dependencies:
       url: https://github.com/hramaroson/flutter_cameraview.git
 
 flutter_icons:
-  android: "launcher_icon" 
+  android: "launcher_icon"
   ios: true
   image_path: "assets/icon/logo.png"
 
@@ -73,6 +72,9 @@ flutter:
     - assets/images/ic_switch_camera_3.png
     - assets/images/ic_no_image.png
     - assets/images/ic_flash_camera.png
+    - assets/images/ic_flash_camera_auto.png
+    - assets/images/ic_flash_camera_off.png
+    - assets/images/ic_flash_camera_tourch.png
     - assets/fruits_and_vegitables.png
     - assets/xxx.jpg
     - assets/img.jpg
