@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:thuru_care_client/pages/navigation/fifth_screen.dart';
-import 'package:thuru_care_client/pages/navigation/first_screen.dart';
+import 'package:thuru_care_client/pages/navigation/login_screen.dart';
+import 'package:thuru_care_client/pages/navigation/dashboard_screen.dart';
 import 'package:thuru_care_client/pages/navigation/fourth_screen.dart';
 import 'package:thuru_care_client/pages/navigation/second_screen.dart';
-import 'package:thuru_care_client/pages/navigation/sixth_screen.dart';
 import 'package:thuru_care_client/pages/navigation/third_screen.dart';
 import 'package:thuru_care_client/utils/thuru_care.dart';
 
@@ -29,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
    new FirstScreenState(),
    new SecondScreenState(Colors.yellow),
    new ThirdScreenState(Colors.green),
-   new FourthScreenState(Colors.black),
+   new FourthScreenState(),
    new FifthScreenState()
  ];
 
@@ -64,7 +63,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
 
       body: _children[_currentIndex],
       bottomNavigationBar: GradientBottomNavigationBar(
@@ -84,16 +82,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         currentIndex: _currentIndex,
         onTap: onTabTapped,
         
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black54,
-        onPressed: () => {
-          Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => new CameraHomeScreen()),
-        )
-        },tooltip: 'Add',
-      child: Icon(Icons.camera_alt, color: Colors.white, size: 30,),
       ),
     );
   }
