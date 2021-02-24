@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:thuru_care_client/utils/assets.dart';
 import 'package:thuru_care_client/utils/thuru_care.dart';
 import 'package:thuru_care_client/utils/my_navigator.dart';
 
@@ -11,13 +13,27 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Future checkSplashScreen() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    bool _firstRun = (preferences.getBool('firstRun') ?? false);
+    if(_firstRun){
+      MyNavigator.goToHome(context);
+    }else{
+      _firstRun = await preferences.setBool("firstRun", true);
+      MyNavigator.goToIntro(context);
+    }
+    
+  }
   @override
-  void initState() {
+  void initState(){
     // TODO: implement initState
     super.initState();
-    setFullscreen(true);
-    Timer(Duration(seconds: 5), () => MyNavigator.goToIntro(context));
+    
+    //setFullscreen(true);
+    Timer(Duration(seconds: 4), () => checkSplashScreen());
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +43,12 @@ class _SplashScreenState extends State<SplashScreen> {
         children: <Widget>[
           Container(
           decoration: new BoxDecoration(
-            gradient: new LinearGradient(
-                colors: [
-                  Colors.green,
-                  Colors.lightGreen,
-                ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: Alignment(0.8, 5.0), 
-                stops: [0.0, 0.5],
-                tileMode: TileMode.clamp),
+            image: new DecorationImage(
+              image: new AssetImage("assets/fruits_and_vegitables.png"),
+              fit: BoxFit.fitWidth,
+              alignment: Alignment.bottomLeft,
+            ),
+            color: Colors.white
           ),
         ),
           Column(
@@ -47,26 +60,19 @@ class _SplashScreenState extends State<SplashScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 50.0,
-                        backgroundImage:
-                        AssetImage('assets/logo.png'),
-                      ),
                       Padding(
-                        padding: EdgeInsets.only(top: 10.0),
+                        padding: EdgeInsets.only(top: 30.0),
                       ),
-                      Text(
-                        ThuruCare.name,
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24.0),
-                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        child: Image.asset('assets/logo.png')),
+                      
+                      
+                      
                       Text(
                         ThuruCare.version,
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.green[700],
                             fontStyle: FontStyle.italic,
                             fontSize: 10.0),
                       )
@@ -75,26 +81,30 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    CircularProgressIndicator(
-                      valueColor:
-                          new AlwaysStoppedAnimation<Color>(Colors.black54),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom:20.0),
+                      child: CircularProgressIndicator(
+                        
+                        valueColor:
+                            new AlwaysStoppedAnimation<Color>(Colors.green),
+                      ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(top: 20.0),
+                      padding: EdgeInsets.only(top: 0.0),
                     ),
                     Text(
                       ThuruCare.captionLoading,
                       softWrap: true,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          fontWeight: FontWeight.w300,
-                          fontSize: 18.0,
+                          fontWeight: FontWeight.w200,
+                          fontSize: 16.0,
                           fontStyle: FontStyle.italic, // italic
-                          color: Colors.white),
+                          color: Colors.green[900]),
                     )
                   ],
                 ),

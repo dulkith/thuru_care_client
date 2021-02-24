@@ -1,132 +1,219 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'package:location/location.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:thuru_care_client/models/WeatherModel.dart';
+import 'package:thuru_care_client/pages/home_screen.dart';
 import 'package:thuru_care_client/pages/navigation/camera_screen.dart';
+import 'package:thuru_care_client/pages/navigation/result_list.dart';
+import 'package:thuru_care_client/presentation/thuru_care_icons_icons.dart';
 import 'package:thuru_care_client/utils/app_bar.dart';
 import 'package:thuru_care_client/utils/dashboard.dart';
-import 'package:thuru_care_client/utils/thuru_care.dart';
+import 'package:thuru_care_client/widgets/layoutWidgets.dart';
+import 'package:http/http.dart' as http;
 
-const String _AccountName = 'Dulkith Bataduwa';
-const String _AccountEmail = 'dulkith.2016210@iit.ac.lk';
-const String _AccountAbbr = 'D';
+LocationData _currentLocation;
+String lat;
+String lon;
 
 class FirstScreenState extends StatelessWidget {
   FirstScreenState();
 
   @override
   Widget build(BuildContext context) {
+    return HomePage();
+  }
+}
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  Map<String, double> currentLocation = new Map();
+  StreamSubscription<Map<String, double>> locationSubscription;
+  //LocationData _currentLocation;
+  StreamSubscription<LocationData> _locationSubscription;
+
+  var _locationService = new Location();
+  String error;
+  bool _permission = false;
+
+  void initState() {
+    super.initState();
+
+    initPlatformState();
+
+    _locationSubscription = _locationService
+        .onLocationChanged()
+        .listen((LocationData currentLocation) async {
+      setState(() {
+        _currentLocation = currentLocation;
+      });
+    });
+  }
+
+  void initPlatformState() async {
+    try {
+      _currentLocation = await _locationService.getLocation();
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        error = 'Permission denied';
+      } else if (e.code == "PERMISSION_DENIED_NEVER_ASK") {
+        error = 'Permission denied';
+      }
+      _currentLocation = null;
+    }
+  }
+
+  Future<WeatherModel> getWeather(String lat, String lng) async {
+    final response = await http.get(
+        'https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=7ccab19f643bc8e132bc7305150b48c4&units=metric');
+
+    if (response.statusCode == 200) {
+      var result = json.decode(response.body);
+      var model = WeatherModel.fromJson(result);
+      return model;
+    } else
+      throw Exception('Failed to load Weather Infromation.');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_currentLocation == null) {
+      lat = "0.0";
+      lon = "0.0";
+    } else {
+      lat = _currentLocation.latitude.toString();
+      lon = _currentLocation.longitude.toString();
+    }
+
     return Scaffold(
-
-
-
-
-      drawer: new Drawer(
-          child: new ListView(
-              padding: const EdgeInsets.only(top: 0.0),
-              children: <Widget>[
-            new UserAccountsDrawerHeader(
-                accountName: const Text(_AccountName),
-                accountEmail: const Text(_AccountEmail),
-                currentAccountPicture: new CircleAvatar(
-                    backgroundColor: Colors.white,
-                    child: new Text(_AccountAbbr,
-                        style: new TextStyle(
-                            fontSize: 45.0, fontWeight: FontWeight.w400))),
-                otherAccountsPictures: <Widget>[
-                  new GestureDetector(
-                    onTap: () => _onTapOtherAccounts(context),
-                    child: new Semantics(
-                      label: 'Switch Account',
-                      child: new CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: new Text('IIT'),
-                      ),
-                    ),
-                  )
-                ]),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.home),
-              title: new Text(ThuruCare.drawerHome),
-              onTap: () => _onListTileTap(context),
+      appBar: layoutWidgets.appBarWidget(context),
+      drawer: layoutWidgets.drawerWidget(context),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: viewportConstraints.maxHeight,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  FutureBuilder(
+                    future: getWeather(lat, lon),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        WeatherModel model = snapshot.data;
+                        //Format data
+                        var fm = new DateFormat('dd MMMM');
+                        var fm_hour = new DateFormat.Hm();
+                        return Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(12.0, 8.0, 16.0, 12.0),
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10.0)),
+                                gradient: LinearGradient(colors: [
+                                  Theme.of(context).primaryColor,
+                                  Color(0xFF32CA36)
+                                ])), // Yellow
+                            height: MediaQuery.of(context).size.height * 0.25,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          '${model.name}',
+                                          style: TextStyle(
+                                            fontSize: 24,
+                                            color: Colors.white,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          'Today, ${fm.format(new DateTime.fromMillisecondsSinceEpoch((model.dt * 1000), isUtc: true))}',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '${model.main.temp}°C',
+                                          style: TextStyle(
+                                              fontSize: 40,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        Text(
+                                          '${model.weather[0].description}'
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Image.network(
+                                      "https://openweathermap.org/img/wn/${model.weather[0].icon}@2x.png",
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                  /* Container(
+                    // Another fixed-height child.
+                    color: const Color(0xff008000), // Green
+                    height: 120.0,
+                  ), */
+                ],
+              ),
             ),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.leaf),
-              title: new Text(ThuruCare.drawerDiseasesDiag),
-              onTap: () => _onListTileTap(context),
-            ),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.solidCommentAlt),
-              title: new Text(ThuruCare.drawerComSupport),
-              onTap: () => _onListTileTap(context),
-            ),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.mapMarkerAlt),
-              title: new Text(ThuruCare.drawerNearGarden),
-              onTap: () => _onListTileTap(context),
-            ),
-            new Divider(),
-            new ListTile(
-              leading: new Text(ThuruCare.drawerUserProManager),
-              onTap: () => _onListTileTap(context),
-            ),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.userTie),
-              title: new Text(ThuruCare.drawerMyProfile),
-              onTap: () => _onListTileTap(context),
-            ),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.signInAlt),
-              title: new Text(ThuruCare.drawerLogin),
-              onTap: () => _onListTileTap(context),
-            ),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.userPlus),
-              title: new Text(ThuruCare.drawerRegister),
-              onTap: () => _onListTileTap(context),
-            ),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.userEdit),
-              title: new Text(ThuruCare.drawerEditProfile),
-              onTap: () => _onListTileTap(context),
-            ),
-            new Divider(),
-            new ListTile(
-              leading: new Icon(FontAwesomeIcons.key),
-              title: new Text(ThuruCare.drawerChangePass),
-              onTap: () => _onListTileTap(context),
-            ),
-            new Divider(),
-            new ListTile(
-              leading: new Icon(Icons.settings),
-              title: new Text(ThuruCare.drawerSettings),
-              onTap: () => _onListTileTap(context),
-            ),
-            new ListTile(
-              leading: new Icon(Icons.help_outline),
-              title: new Text(ThuruCare.drawerHelpAndFeed),
-              onTap: () => _onListTileTap(context),
-            )
-          ])),
-
-      body: new Column(
-        children: <Widget>[
-          new Page(),
-          new Dashboard(),
-        ],
+          );
+        },
       ),
-
-
-
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: Colors.black54,
+        backgroundColor: Colors.green[800],
         foregroundColor: Colors.white,
-        onPressed: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => new CameraHomeScreen()),
-              )
-            },
+        onPressed: () {
+          Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+            builder: (context) => new CameraHomeScreen(),
+            //builder: (context) => new ResultList(),
+          ));
+        },
         label: Text('Health Check'),
-        icon: Icon(Icons.camera_alt),
+        icon: Icon(ThuruCareIcons.camera),
+        heroTag: null,
       ),
     );
   }
@@ -134,38 +221,91 @@ class FirstScreenState extends StatelessWidget {
 
 //Drawer
 
-_onTapOtherAccounts(BuildContext context) {
-  Navigator.of(context).pop();
-  showDialog<Null>(
-    context: context,
-    child: new AlertDialog(
-      title: const Text('Account switching not implemented.'),
-      actions: <Widget>[
-        new FlatButton(
-          child: const Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    ),
-  );
+/* class HomePage extends StatefulWidget {
+  final String title;
+  HomePage({Key key, this.title}) : super(key: key);
+  
+  @override
+  _HomePageState createState() => _HomePageState();
 }
 
-_onListTileTap(BuildContext context) {
-  Navigator.of(context).pop();
-  showDialog<Null>(
-    context: context,
-    child: new AlertDialog(
-      title: const Text('Not Implemented'),
-      actions: <Widget>[
-        new FlatButton(
-          child: const Text('OK'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    ),
-  );
+class _HomePageState extends State<HomePage> {
+  /* Map<String, double> currentLocation = new Map();
+  StreamSubscription<Map<String, double>> locationSubscription; */
+  //LocationData _currentLocation;
+  StreamSubscription<LocationData> _locationSubscription;
+
+  var _locationService = new Location();
+  String error;
+  bool _permission = false;
+
+  void initState() {
+    
+    super.initState();
+
+    
+
+    initPlatformState();
+
+    _locationSubscription = _locationService
+        .onLocationChanged()
+        .listen((LocationData currentLocation) async {
+      setState(() {
+        _currentLocation = currentLocation;
+      });
+    });
+  }
+
+  void initPlatformState() async {
+    try {
+      _currentLocation = await _locationService.getLocation();
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        error = 'Permission denied';
+      } else if (e.code == "PERMISSION_DENIED_NEVER_ASK") {
+        error = 'Permission denied';
+      }
+      _currentLocation = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    
+    if(_currentLocation == null){
+      lat = "0.0";
+      lon = "0.0";
+    }else{
+      lat = _currentLocation.latitude.toString();
+      lon = _currentLocation.longitude.toString();
+    }
+
+    /* lat = _currentLocation.latitude.toString();
+    lon = _currentLocation.longitude.toString(); */
+    
+
+    return Scaffold(
+      body: new Column(
+        children: <Widget>[
+          Dashboard(lat, lon),
+        ],
+      ),
+      appBar: layoutWidgets.appBarWidget(),
+      drawer: layoutWidgets.drawerWidget(context),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: Colors.green[800],
+        foregroundColor: Colors.white,
+        onPressed: () {
+          Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+            builder: (context) => new CameraHomeScreen(),
+            //builder: (context) => new ResultList(),
+          ));
+        },
+        label: Text('Health Check'),
+        icon: Icon(ThuruCareIcons.camera),
+        heroTag: null,
+      ),
+    );
+  }
 }
+ */

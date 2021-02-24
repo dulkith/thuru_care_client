@@ -1,15 +1,21 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:thuru_care_client/pages/navigation/community.dart';
+import 'package:thuru_care_client/pages/navigation/diseases_library.dart';
 import 'package:thuru_care_client/pages/navigation/login_screen.dart';
 import 'package:thuru_care_client/pages/navigation/dashboard_screen.dart';
-import 'package:thuru_care_client/pages/navigation/fourth_screen.dart';
-import 'package:thuru_care_client/pages/navigation/second_screen.dart';
-import 'package:thuru_care_client/pages/navigation/third_screen.dart';
+import 'package:thuru_care_client/pages/navigation/near_by_gardern.dart';
+import 'package:thuru_care_client/pages/navigation/profile.dart';
+import 'package:thuru_care_client/presentation/thuru_care_icons_icons.dart';
+import 'package:thuru_care_client/scopped-models/User.dart';
 import 'package:thuru_care_client/utils/thuru_care.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
-
 class HomeScreen extends StatefulWidget {
+  final Widget child;
+  int initialPage;
+
+  HomeScreen({this.child, @required this.initialPage});
   @override
   _HomeScreenState createState() => new _HomeScreenState();
 }
@@ -17,25 +23,26 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   AnimationController animCtrl;
   Animation<double> animation;
-
+  TabController tabController;
   AnimationController animCtrl2;
   Animation<double> animation2;
+  static UserModel usrmodel = new UserModel();
 
   bool showFirst = true;
 
   int _currentIndex = 0;
- final List<Widget> _children = [
-   new FirstScreenState(),
-   new SecondScreenState(Colors.yellow),
-   new ThirdScreenState(Colors.green),
-   new FourthScreenState(),
-   new FifthScreenState()
- ];
+  final List<Widget> _children = [
+    new FirstScreenState(),
+    new DiseasesLibrary(),
+    new CommunityPage(),
+    new FourthScreenState(),
+    new ProfilePage()
+  ];
 
   @override
   void initState() {
     super.initState();
-
+    tabController = TabController(vsync: this, length: 5, initialIndex: widget.initialPage);
     // Animation init
     animCtrl = new AnimationController(
         duration: new Duration(milliseconds: 500), vsync: this);
@@ -57,44 +64,64 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     animCtrl.dispose();
+    tabController.dispose();
+    _nextPage(widget.initialPage);
     super.dispose();
+  }
+
+  void _nextPage(int tab) {
+    final int newTab = tabController.index + tab;
+    if (newTab < 0 || newTab >= tabController.length) return;
+    tabController.animateTo(newTab);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: _children[_currentIndex],
-      bottomNavigationBar: GradientBottomNavigationBar(
-        backgroundColorStart: Colors.green,
-        backgroundColorEnd: Colors.lightGreen,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text(ThuruCare.dashHome)),
-          BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.leaf), title: Text(ThuruCare.dashDiseases)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.comment), title: Text(ThuruCare.dashComm)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.location_on), title: Text(ThuruCare.dashNear)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), title: Text(ThuruCare.dashPro)),
-        ],
-        currentIndex: _currentIndex,
-        onTap: onTabTapped,
-        
+    return new WillPopScope(
+      child: Scaffold(
+        body: TabBarView(
+          controller: tabController,
+          children: <Widget>[
+            new FirstScreenState(),
+            new DiseasesLibrary(),
+            new CommunityPage(),
+            new FourthScreenState(),
+            new ProfilePage()
+          ],
+        ),
+        bottomNavigationBar: TabBar(
+          controller: tabController,
+          indicatorColor: Theme.of(context).primaryColor,
+          labelColor:Theme.of(context).primaryColor ,
+          unselectedLabelColor: Colors.grey[400],
+          labelStyle: TextStyle(fontSize: 10),
+          unselectedLabelStyle: TextStyle(fontSize: 10,),
+          indicatorWeight: 4.0,
+          tabs: <Widget>[
+            Tab(icon: Icon(ThuruCareIcons.home), text: ThuruCare.dashHome),
+            Tab(icon: Icon(ThuruCareIcons.leaf), text: ThuruCare.dashDiseases),
+            Tab(icon: Icon(ThuruCareIcons.graduation_cap),text: ThuruCare.dashComm),
+            Tab(icon: Icon(ThuruCareIcons.location), text: ThuruCare.dashNear),
+            Tab(icon: Icon(ThuruCareIcons.user), text: ThuruCare.dashPro),
+          ],
+        ),
       ),
+      onWillPop: () {
+        return new Future(() => false);
+      },
     );
   }
 
   void onTabTapped(int index) {
-   setState(() {
-     _currentIndex = index;
-   });
- }
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 }
 
 class CardView extends StatelessWidget {
   final double cardSize;
+
   CardView(this.cardSize);
 
   @override

@@ -57,9 +57,9 @@ class GradientAppBar extends StatelessWidget {
       ),
       decoration: new BoxDecoration(
         gradient: new LinearGradient(
-            colors: [Colors.green, Colors.lightGreen],
+            colors: [Colors.green[500], Colors.lightGreen[600]],
             begin: const FractionalOffset(0.0, 0.0),
-            end: const FractionalOffset(0.5, 0.0),
+            end: const FractionalOffset(1, 0.1),
             stops: [0.0, 1.0],
             tileMode: TileMode.clamp),
       ),

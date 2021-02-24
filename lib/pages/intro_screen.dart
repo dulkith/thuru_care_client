@@ -1,110 +1,125 @@
 import 'package:flutter/material.dart';
-import 'package:thuru_care_client/utils/thuru_care.dart';
+import 'package:flutter/services.dart';
+import 'package:thuru_care_client/utils/intro/dots_indicator.dart';
+import 'package:thuru_care_client/utils/intro/page1.dart';
+import 'package:thuru_care_client/utils/intro/page2.dart';
+import 'package:thuru_care_client/utils/intro/page3.dart';
 import 'package:thuru_care_client/utils/my_navigator.dart';
-import 'package:thuru_care_client/widgets/walkthrough.dart';
 
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+class _OnboardingMainPageState extends State<OnboardingMainPage> {
+  final _controller = new PageController();
+  final List<Widget> _pages = [
+    Page1(),
+    Page2(),
+    Page3(),
+  ];
+  int page = 0;
 
-class IntroScreen extends StatefulWidget {
   @override
-  IntroScreenState createState() {
-    return IntroScreenState();
-  }
-}
-
-class IntroScreenState extends State<IntroScreen> {
-  final PageController controller = new PageController();
-  int currentPage = 0;
-  bool lastPage = false;
-
-  void _onPageChanged(int page) {
-    setState(() {
-      currentPage = page;
-      if (currentPage == 3) {
-        lastPage = true;
-      } else {
-        lastPage = false;
-      }
-    });
+  void initState() {
+    super.initState();
+    setFullscreen(false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0xFFEEEEEE),
-      padding: EdgeInsets.all(2.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Expanded(
-            flex: 1,
-            child: Container(),
-          ),
-          Expanded(
-            flex: 6,
-            child: PageView(
-              children: <Widget>[
-                Walkthrough(
-                  title: ThuruCare.wt1,
-                  content: ThuruCare.wc1,
-                  imageIcon: FontAwesomeIcons.leaf,
-                  imagecolor: Colors.green,
-                ),
-                Walkthrough(
-                  title: ThuruCare.wt2,
-                  content: ThuruCare.wc2,
-                  imageIcon: FontAwesomeIcons.camera,
-                  imagecolor: Colors.red[400],
-                ),
-                Walkthrough(
-                  title: ThuruCare.wt3,
-                  content: ThuruCare.wc3,
-                  imageIcon: FontAwesomeIcons.medkit,
-                  imagecolor: Colors.blueAccent,
-                ),
-                Walkthrough(
-                  title: ThuruCare.wt4,
-                  content: ThuruCare.wc4,
-                  imageIcon: FontAwesomeIcons.mapMarkedAlt,
-                  imagecolor: Colors.lightGreen,
-                ),
-              ],
-              controller: controller,
-              onPageChanged: _onPageChanged,
+    bool isDone = page == _pages.length - 1;
+    return new WillPopScope(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: new Stack(
+          children: <Widget>[
+            new Positioned.fill(
+              child: new PageView.builder(
+                physics: new AlwaysScrollableScrollPhysics(),
+                controller: _controller,
+                itemCount: _pages.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return _pages[index % _pages.length];
+                },
+                onPageChanged: (int p) {
+                  setState(() {
+                    page = p;
+                  });
+                },
+              ),
             ),
-          ),
-          Expanded(
-            flex: 1,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                FlatButton(
-                  child: Text(lastPage ? "" : ThuruCare.skip,
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0)),
-                  onPressed: () =>
-                      lastPage ? null : MyNavigator.goToHome(context),
+            new Positioned(
+              top: 0.0,
+              left: 0.0,
+              right: 0.0,
+              child: new SafeArea(
+                child: AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                  primary: false,
+                  title: Text('Thuru Care'),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                        isDone ? 'DONE' : 'NEXT',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: isDone
+                          ? () {
+                              MyNavigator.goToHome(context);
+                            }
+                          : () {
+                              _controller.animateToPage(page + 1,
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeIn);
+                            },
+                    )
+                  ],
                 ),
-                FlatButton(
-                  child: Text(lastPage ? ThuruCare.gotIt : ThuruCare.next,
-                      style: TextStyle(
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0)),
-                  onPressed: () => lastPage
-                      ? MyNavigator.goToHome(context)
-                      : controller.nextPage(
-                          duration: Duration(milliseconds: 300),
-                          curve: Curves.easeIn),
-                ),
-              ],
+              ),
             ),
-          )
-        ],
+            new Positioned(
+              bottom: 10.0,
+              left: 0.0,
+              right: 0.0,
+              child: new SafeArea(
+                child: new Column(
+                  children: <Widget>[
+                    new Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new DotsIndicator(
+                        controller: _controller,
+                        itemCount: _pages.length,
+                        onPageSelected: (int page) {
+                          _controller.animateToPage(
+                            page,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.ease,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
+      onWillPop: () {
+        return new Future(() => false);
+      },
     );
   }
+
+  static setFullscreen(bool value) {
+    if (value) {
+      SystemChrome.setEnabledSystemUIOverlays([]);
+    } else {
+      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    }
+  }
+}
+
+class OnboardingMainPage extends StatefulWidget {
+  OnboardingMainPage({Key key}) : super(key: key);
+
+  @override
+  _OnboardingMainPageState createState() => new _OnboardingMainPageState();
 }

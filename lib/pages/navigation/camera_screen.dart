@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'dart:io';
@@ -45,12 +46,22 @@ class _MyHomePageState extends State<CameraHomeScreen> {
           children: <Widget>[
             CameraView(onCreated: _onCameraViewCreated),
             Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                padding: const EdgeInsets.all(35.0),
+                child: const Text(
+                  "Take a picture of your crop",
+                  style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                ),
+              ),
+            ),
+            Align(
               alignment: Alignment.bottomCenter,
               child: Container(
                 width: double.infinity,
                 height: 120.0,
                 padding: EdgeInsets.all(20.0),
-                color: Color.fromRGBO(00, 99, 00, 0.4),
+                color: Color.fromRGBO(0, 150, 0, 0.3),
                 child: Stack(
                   children: <Widget>[
                     Align(
@@ -58,16 +69,16 @@ class _MyHomePageState extends State<CameraHomeScreen> {
                       child: Material(
                         color: Colors.transparent,
                         child: InkWell(
-                          borderRadius: BorderRadius.all(Radius.circular(50.0)),
+                          borderRadius: BorderRadius.all(Radius.circular(60.0)),
                           onTap: () {
                             _onTakePictureButtonPressed();
                           },
                           child: Container(
-                            padding: EdgeInsets.all(4.0),
+                            padding: EdgeInsets.all(2.0),
                             child: Image.asset(
                               'assets/images/ic_shutter_1.png',
-                              width: 72.0,
-                              height: 72.0,
+                              width: 75.0,
+                              height: 75.0,
                             ),
                           ),
                         ),
@@ -116,14 +127,14 @@ class _MyHomePageState extends State<CameraHomeScreen> {
             ),
             //Settings button
             Positioned(
-              top: 8.0,
-              right: 8.0,
+              top: 25.0,
+              left: 8.0,
               width: 40.0,
               height: 40.0,
               child: new IconButton(
                 color: Colors.white,
-                icon: new Icon(Icons.settings, size: 25.0),
-                onPressed: () => _onSettingsButtonPressed(context),
+                icon: new Icon(Icons.arrow_back_ios, size: 25.0),
+                onPressed: () => Navigator.pop(context, false),
               ),
             ),
 
@@ -286,10 +297,10 @@ class _MyHomePageState extends State<CameraHomeScreen> {
     setState(() {
       _thumbnailImage = image;
     });
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => new CameraPreview(targetPath)),
-    );
+    Navigator.pop(context,true);
+    Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
+      builder: (context) => new CameraPreview(targetPath),
+    ));
   }
 
   void _openImageGallery() async {
